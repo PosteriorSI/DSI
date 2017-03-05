@@ -123,14 +123,4 @@ void InitConfig(void)
 
    MIN_BALANCE=10000;
    MAX_BALANCE=50000;
-
-   //hotspot control
-   HOTSPOT_PERCENTAGE=25;
-   HOTSPOT_FIXED_SIZE=100;
-
-   //duration control
-   extension_limit=10;
-
-   //random read control
-   random_read_limit=0;
 }

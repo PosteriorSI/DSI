@@ -10,7 +10,6 @@
 #define THREADNUM threadnum
 #define NODENUMMAX 50
 #define THREADNUMMAX 64
-#define IP_PREFIX "127.0.0."
 
 #define SEND_BUFFER_MAXSIZE 1000
 #define RECV_BUFFER_MAXSIZE 1000
@@ -31,13 +30,22 @@ extern void InitMasterClient(int threadid);
 extern int message_socket;
 extern int param_socket;
 extern int port_base;
-extern int ip_suffix;
 extern FILE * conf_fp;
 
 extern int oneNodeWeight;
 extern int twoNodeWeight;
 
 extern int redo_limit;
+
+//hotspot control
+extern int HOTSPOT_PERCENTAGE;
+extern int HOTSPOT_FIXED_SIZE;
+
+//duration control
+extern int extension_limit;
+
+//random read control
+extern int random_read_limit;
 
 extern int nodenum;
 extern int threadnum;

@@ -454,21 +454,19 @@ void InitNetworkParam(void)
 
 void GetParam(void)
 {
-   int i = 0;
-   int j;
-   int count = 0;
+   int i;
    int param_send_buffer[1];
    int param_recv_buffer[10+NODENUMMAX];
 
-   while (count != 3)
+   // register local IP to master node && get by other nodes in the system
+   in_addr_t help = inet_addr(local_ip);
+   if (help == INADDR_NONE)
    {
-	   if (local_ip[i] == '.')
-		   ++count;
-	   ++i;
+       printf("inet addr error\n");
+       exit(-1);
    }
+   param_send_buffer[0] = (uint32_t)help;
 
-   ip_suffix = atoi(local_ip+i);
-   param_send_buffer[0] = ip_suffix;
    if (send(param_socket, param_send_buffer, sizeof(param_send_buffer), 0) == -1)
 	   printf("get param send error\n");
    if (recv(param_socket, param_recv_buffer, sizeof(param_recv_buffer), 0) == -1)
@@ -486,19 +484,28 @@ void GetParam(void)
    twoNodeWeight = param_recv_buffer[8];
    redo_limit = param_recv_buffer[9];
 
+   // hotspot control
+   HOTSPOT_PERCENTAGE = param_recv_buffer[10];;
+   HOTSPOT_FIXED_SIZE = param_recv_buffer[11];;
 
-   for (j = 0; j < nodenum; j++)
+   // duration control
+   extension_limit = param_recv_buffer[12];
+       
+   // random read control
+   random_read_limit = param_recv_buffer[13];
+
+
+   for (i = 0; i < nodenum; i++)
    {
-	  char buffer[5];
-	  char result[20] = IP_PREFIX;
-	  sprintf(buffer, "%d", param_recv_buffer[10+j]);
-      strcat(result, buffer);
+      struct in_addr help;
+      help.s_addr = param_recv_buffer[14+i];
+      char * result = inet_ntoa(help);
       int k;
       for (k = 0; result[k] != '\0'; k++)
       {
-    	  node_ip[j][k] = result[k];
+    	  node_ip[i][k] = result[k];
       }
-      node_ip[j][k] = '\0';
+      node_ip[i][k] = '\0';
    }
 }
 

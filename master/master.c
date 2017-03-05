@@ -367,7 +367,11 @@ void InitRecord(void)
     printf("\n");
     for (i = 0; i < NODENUM; i++)
     {
-    	printf("ip%ld %ld %ld %ld %ld\n", buf[i][0], buf[i][1], buf[i][2], buf[i][3], buf[i][4]);
+        struct in_addr help;
+
+        help.s_addr = (in_addr_t)buf[i][0];
+        char * result = inet_ntoa(help);
+    	printf("%s %ld %ld %ld %ld\n", result, buf[i][1], buf[i][2], buf[i][3], buf[i][4]);
     }
     //now we can reform the node to begin to run the transaction.
 }

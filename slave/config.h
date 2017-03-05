@@ -58,16 +58,6 @@ extern int FREQUENCY_WRITE_CHECK;
 extern int MIN_BALANCE;
 extern int MAX_BALANCE;
 
-//hotspot control
-extern int HOTSPOT_PERCENTAGE;
-extern int HOTSPOT_FIXED_SIZE;
-
-//duration control
-extern int extension_limit;
-
-//random read control
-extern int random_read_limit;
-
 extern void InitConfig(void);
 
 #endif /* CONFIG_H_ */
