@@ -1,0 +1,23 @@
+begin read prime table
+BucketSize:0 , 10007
+BucketSize:1 , 10007
+BucketSize:2 , 10007
+ThreadReuseMemStart=133736
+server 0 is ready
+enter release the connect 0
+enter release the connect 1
+enter release the connect 2
+count for communications times:
+   0 : 0 times
+   1 : 4776 times
+   2 : 0 times
+   3 : 4777 times
+   4 : 0 times
+   5 : 120532 times
+   6 : 3916 times
+   7 : 3914 times
+   8 : 2 times
+   9 : 0 times
+  10 : 0 times
+  11 : 0 times
+storage process finished.
