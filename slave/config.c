@@ -83,7 +83,7 @@ void InitConfig(void)
 	benchmarkType=TPCC;
 
 	//transPerTerminal
-	transactionsPerTerminal=2000;
+	transactionsPerTerminal=20000;
 
 	//we didn't build index on tables, so range query in order-status and delivery transactions are very slow,
 	//there we set 'orderStatusWeightValue' and 'deliveryWeightValue' to '0', so we actually didn't implement
