@@ -79,8 +79,8 @@ int random_read_limit;
 
 void InitConfig(void)
 {
-	TABLENUM=SMALLBANK_TABLENUM;
-	benchmarkType=SMALLBANK;
+	TABLENUM=TPCC_TABLENUM;
+	benchmarkType=TPCC;
 
 	//transPerTerminal
 	transactionsPerTerminal=2000;
@@ -95,11 +95,11 @@ void InitConfig(void)
 
 	limPerMin_Terminal=0;
 
-	configWhseCount=5;
+	configWhseCount=1;
 	configDistPerWhse=10;
-	configCustPerDist=3000;
+	configCustPerDist=300;
 	MaxBucketSize=10000000;
-	configUniqueItems=100000;
+	configUniqueItems=1000;
 
 	configCommitCount=60;
 
@@ -110,7 +110,7 @@ void InitConfig(void)
 	EMapNum=2633;
 
 	//smallbank
-   scaleFactor=0.11;
+   scaleFactor=0.1;
    configNumAccounts=(int)(scaleFactor*1000000);
    configAccountsPerBucket=10000;
 
