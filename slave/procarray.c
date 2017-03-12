@@ -18,95 +18,95 @@ int procarray_shmid;
 
 size_t ProcArraySize(void)
 {
-	return sizeof(PROC)*THREADNUM;
+    return sizeof(PROC)*THREADNUM;
 }
 
 void InitProcArray(void)
 {
-	int i;
-	size_t size;
+    int i;
+    size_t size;
 
-	size=ProcArraySize();
+    size=ProcArraySize();
 
-	procarray=(PROC*)ShmemAlloc(size);
+    procarray=(PROC*)ShmemAlloc(size);
 
-	if((PROC*)-1==procarray)
-	{
-		printf("procarray error\n");
-		exit(-1);
-	}
+    if((PROC*)-1==procarray)
+    {
+        printf("procarray error\n");
+        exit(-1);
+    }
 
-	memset((char*)procarray, 0, size);
+    memset((char*)procarray, 0, size);
 
-	for(i=0;i<THREADNUM;i++)
-		procarray[i].index=i;
+    for(i=0;i<THREADNUM;i++)
+        procarray[i].index=i;
 }
 
 void setGlobalCidRange(int index, Cid low, Cid up)
 {
-	AcquireWrLock(ProcArrayLock, LOCK_SHARED);
+    AcquireWrLock(ProcArrayLock, LOCK_SHARED);
 
-	procarray[index].global_cid_range_low=low;
-	procarray[index].global_cid_range_up=up;
+    procarray[index].global_cid_range_low=low;
+    procarray[index].global_cid_range_up=up;
 
-	ReleaseWrLock(ProcArrayLock);
+    ReleaseWrLock(ProcArrayLock);
 }
 
 void getGlobalCidRange(int index, Cid* low, Cid* up)
 {
-	AcquireWrLock(ProcArrayLock, LOCK_SHARED);
+    AcquireWrLock(ProcArrayLock, LOCK_SHARED);
 
-	*low=procarray[index].global_cid_range_low;
-	*up=procarray[index].global_cid_range_up;
+    *low=procarray[index].global_cid_range_low;
+    *up=procarray[index].global_cid_range_up;
 
-	ReleaseWrLock(ProcArrayLock);
+    ReleaseWrLock(ProcArrayLock);
 }
 
 void setGlobalCidRangeUp(int index, Cid up)
 {
-	//AcquireWrLock(ProcArrayLock, LOCK_SHARED);
+    //AcquireWrLock(ProcArrayLock, LOCK_SHARED);
 
-	procarray[index].global_cid_range_up=up;
+    procarray[index].global_cid_range_up=up;
 
-	//ReleaseWrLock(ProcArrayLock);
+    //ReleaseWrLock(ProcArrayLock);
 }
 
 void AtStart_ProcArray(int index, TransactionId tid, Cid low)
 {
-	AcquireWrLock(ProcArrayLock, LOCK_SHARED);
+    AcquireWrLock(ProcArrayLock, LOCK_SHARED);
 
-	procarray[index].tid=tid;
-	procarray[index].global_cid_range_low=low;
-	procarray[index].global_cid_range_up=0;
+    procarray[index].tid=tid;
+    procarray[index].global_cid_range_low=low;
+    procarray[index].global_cid_range_up=0;
 
-	ReleaseWrLock(ProcArrayLock);
+    ReleaseWrLock(ProcArrayLock);
 }
 
 void AtEnd_ProcArray(int index)
 {
-	AcquireWrLock(ProcArrayLock, LOCK_SHARED);
+    AcquireWrLock(ProcArrayLock, LOCK_SHARED);
 
-	procarray[index].tid=InvalidTransactionId;
-	procarray[index].global_cid_range_low=0;
-	procarray[index].global_cid_range_up=0;
+    procarray[index].tid=InvalidTransactionId;
+    procarray[index].global_cid_range_low=0;
+    procarray[index].global_cid_range_up=0;
 
-	ReleaseWrLock(ProcArrayLock);
+    ReleaseWrLock(ProcArrayLock);
 }
 
 int getTransactionIdIndex(TransactionId tid)
 {
-	int index=-1;
-	int i;
+    int index=-1;
+    int i;
 
-	for(i=0;i<=THREADNUM;i++)
-	{
-		if(procarray[i].tid == tid)
-		{
-			index=i;
-			break;
-		}
-	}
+    for(i=0;i<=THREADNUM;i++)
+    {
+        if(procarray[i].tid == tid)
+        {
+            index=i;
+            break;
+        }
+    }
 
-	return index;
+    return index;
 
 }

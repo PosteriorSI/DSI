@@ -12,17 +12,17 @@
 
 typedef struct ElemMap
 {
-	//the number of element in the Map.
-	//int num;
-	Cid key;
-	Cid value;
+    //the number of element in the Map.
+    //int num;
+    Cid key;
+    Cid value;
 }EMap;
 
 typedef struct ListMap
 {
-	int tail;
-	Cid key;
-	TransactionId *list;
+    int tail;
+    Cid key;
+    TransactionId *list;
 }LMap;
 
 extern EMap* gcid2lcid;

@@ -15,8 +15,8 @@
 
 typedef struct run_args
 {
-	int i;
-	int type;
+    int i;
+    int type;
 } run_args;
 
 extern pthread_barrier_t barrier;

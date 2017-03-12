@@ -79,37 +79,37 @@ int random_read_limit;
 
 void InitConfig(void)
 {
-	TABLENUM=TPCC_TABLENUM;
-	benchmarkType=TPCC;
+    TABLENUM=TPCC_TABLENUM;
+    benchmarkType=TPCC;
 
-	//transPerTerminal
-	transactionsPerTerminal=20000;
+    //transPerTerminal
+    transactionsPerTerminal=20000;
 
-	//we didn't build index on tables, so range query in order-status and delivery transactions are very slow,
-	//there we set 'orderStatusWeightValue' and 'deliveryWeightValue' to '0', so we actually didn't implement
-	//those two transactions order-status transaction and delivery transaction.
-	paymentWeightValue=43;
-	orderStatusWeightValue=0;
-	deliveryWeightValue=0;
-	stockLevelWeightValue=4;
+    //we didn't build index on tables, so range query in order-status and delivery transactions are very slow,
+    //there we set 'orderStatusWeightValue' and 'deliveryWeightValue' to '0', so we actually didn't implement
+    //those two transactions order-status transaction and delivery transaction.
+    paymentWeightValue=43;
+    orderStatusWeightValue=0;
+    deliveryWeightValue=0;
+    stockLevelWeightValue=4;
 
-	limPerMin_Terminal=0;
+    limPerMin_Terminal=0;
 
-	configWhseCount=1;
-	configDistPerWhse=10;
-	configCustPerDist=300;
-	MaxBucketSize=10000000;
-	configUniqueItems=1000;
+    configWhseCount=1;
+    configDistPerWhse=10;
+    configCustPerDist=300;
+    MaxBucketSize=10000000;
+    configUniqueItems=1000;
 
-	configCommitCount=60;
+    configCommitCount=60;
 
-	OrderMaxNum=12000;
+    OrderMaxNum=12000;
 
-	MaxDataLockNum=80;
+    MaxDataLockNum=80;
 
-	EMapNum=2633;
+    EMapNum=2633;
 
-	//smallbank
+    //smallbank
    scaleFactor=0.1;
    configNumAccounts=(int)(scaleFactor*1000000);
    configAccountsPerBucket=10000;

@@ -11,10 +11,10 @@
 
 struct PROC
 {
-	TransactionId tid;
-	Cid global_cid_range_low;
-	Cid global_cid_range_up;
-	int index;//the index for per thread.
+    TransactionId tid;
+    Cid global_cid_range_low;
+    Cid global_cid_range_up;
+    int index;//the index for per thread.
 };
 
 typedef struct PROC PROC;

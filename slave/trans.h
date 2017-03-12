@@ -16,36 +16,36 @@
 
 typedef enum
 {
-	empty,
-	active,
-	prepared,
-	committed,
-	aborted
+    empty,
+    active,
+    prepared,
+    committed,
+    aborted
 }State;
 
 struct TransactionData
 {
-	TransactionId tid;
+    TransactionId tid;
 
-	Cid lsnap;
+    Cid lsnap;
 
-	Cid global_cid_range_up;
+    Cid global_cid_range_up;
 
-	Cid global_cid_range_low;
+    Cid global_cid_range_low;
 
-	Cid local_cid;
+    Cid local_cid;
 
-	State state;
+    State state;
 
-	//false for not yet, true for already.
-	bool first_remote_access;
+    //false for not yet, true for already.
+    bool first_remote_access;
 
-	int flag;
+    int flag;
 
-	//for test
-	int trans_index;
-	int nid;
-	int ExtendAbort;
+    //for test
+    int trans_index;
+    int nid;
+    int ExtendAbort;
 };
 
 typedef struct TransactionData TransactionData;
@@ -53,12 +53,12 @@ typedef struct TransactionData TransactionData;
 
 typedef struct ShmemVariable
 {
-	Cid LOCAL_CID;
-	TransactionId LOCAL_TID;
-	Cid LAST_GCID;
+    Cid LOCAL_CID;
+    TransactionId LOCAL_TID;
+    Cid LAST_GCID;
 
-	int LcidNum;
-	int LsnapNum;
+    int LcidNum;
+    int LsnapNum;
 }ShmemVariable;
 
 #define TransactionIdIsValid(tid) (tid != InvalidTransactionId)

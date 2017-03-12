@@ -98,44 +98,44 @@ void InitMasterBuffer(void)
    mrecv_buffer = (uint64_t **) malloc (NODENUM*(THREADNUM+1) * sizeof(uint64_t *));
 
    if (msend_buffer == NULL || mrecv_buffer == NULL)
-	   printf("master buffer pointer malloc error\n");
+       printf("master buffer pointer malloc error\n");
 
    for (i = 0; i < NODENUM*(THREADNUM+1); i++)
    {
       msend_buffer[i] = (uint64_t *) malloc (MSEND_BUFFER_MAXSIZE * sizeof(uint64_t));
       mrecv_buffer[i] = (uint64_t *) malloc (MRECV_BUFFER_MAXSIZE * sizeof(uint64_t));
-	   if ((msend_buffer[i] == NULL) || mrecv_buffer[i] == NULL)
-		   printf("master buffer malloc error\n");
+       if ((msend_buffer[i] == NULL) || mrecv_buffer[i] == NULL)
+           printf("master buffer malloc error\n");
    }
 }
 
 void InitParam(void)
 {
-	int ip[NODENUM];
-	//record the accept socket fd of the connected client
-	int conn;
-	int param_connect[NODENUM];
+    int ip[NODENUM];
+    //record the accept socket fd of the connected client
+    int conn;
+    int param_connect[NODENUM];
 
-	int param_send_buffer[14+NODENUM];
-	int param_recv_buffer[1];
+    int param_send_buffer[14+NODENUM];
+    int param_recv_buffer[1];
 
-	int master_sockfd;
+    int master_sockfd;
     int port = param_port;
-	// use the TCP protocol
-	master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	//bind
-	struct sockaddr_in mastersock_addr;
-	memset(&mastersock_addr, 0, sizeof(mastersock_addr));
-	mastersock_addr.sin_family = AF_INET;
-	mastersock_addr.sin_port = htons(port);
-	mastersock_addr.sin_addr.s_addr = INADDR_ANY;
+    // use the TCP protocol
+    master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    //bind
+    struct sockaddr_in mastersock_addr;
+    memset(&mastersock_addr, 0, sizeof(mastersock_addr));
+    mastersock_addr.sin_family = AF_INET;
+    mastersock_addr.sin_port = htons(port);
+    mastersock_addr.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
-	{
-		printf("parameter server bind error!\n");
-		exit(1);
-	}
-	//listen
+    if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
+    {
+        printf("parameter server bind error!\n");
+        exit(1);
+    }
+    //listen
 
     if(listen(master_sockfd, LISTEN_QUEUE) == -1)
     {
@@ -143,111 +143,111 @@ void InitParam(void)
         exit(1);
     }
 
-	socklen_t slave_length;
-	struct sockaddr_in slave_addr;
-	slave_length = sizeof(slave_addr);
-   	int i = 0;
-   	int j;
+    socklen_t slave_length;
+    struct sockaddr_in slave_addr;
+    slave_length = sizeof(slave_addr);
+       int i = 0;
+       int j;
     while(i < NODENUM)
     {
-    	conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
-    	param_connect[i] = conn;
+        conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
+        param_connect[i] = conn;
 
-    	if(conn < 0)
-    	{
-    		printf("param master accept connect error!\n");
-    	    exit(1);
-    	}
-    	i++;
+        if(conn < 0)
+        {
+            printf("param master accept connect error!\n");
+            exit(1);
+        }
+        i++;
     }
 
     for (j = 0; j < NODENUM; j++)
     {
-    	int ret;
-    	ret = recv(param_connect[j], param_recv_buffer, sizeof(param_recv_buffer), 0);
-    	if (ret == -1)
-    	    printf("param master recv error\n");
-    	ip[j] = param_recv_buffer[0];
+        int ret;
+        ret = recv(param_connect[j], param_recv_buffer, sizeof(param_recv_buffer), 0);
+        if (ret == -1)
+            printf("param master recv error\n");
+        ip[j] = param_recv_buffer[0];
     }
 
     for (j = 0; j < NODENUM; j++)
     {
-    	param_send_buffer[0] = NODENUM;
-    	param_send_buffer[1] = THREADNUM;
-    	param_send_buffer[2] = client_port;
-    	param_send_buffer[3] = message_port;
-    	param_send_buffer[4] = master_port;
-    	param_send_buffer[5] = record_port;
-    	param_send_buffer[6] = j;
-    	param_send_buffer[7] = oneNodeWeight;
-    	param_send_buffer[8] = twoNodeWeight;
-    	param_send_buffer[9] = redo_limit;
-    	param_send_buffer[10] = HOTSPOT_PERCENTAGE;
-    	param_send_buffer[11] = HOTSPOT_FIXED_SIZE;
-    	param_send_buffer[12] = extension_limit;
-    	param_send_buffer[13] = random_read_limit;
-    	int k;
-    	for (k = 0; k < NODENUM; k++)
-    	{
-    		param_send_buffer[14+k] = ip[k];
-    	}
-    	int ret;
-    	int size = (14+NODENUM)*sizeof(int);
-    	ret = send(param_connect[j], param_send_buffer, size, 0);
-    	if (ret == -1)
-    	    printf("param naster send error\n");
+        param_send_buffer[0] = NODENUM;
+        param_send_buffer[1] = THREADNUM;
+        param_send_buffer[2] = client_port;
+        param_send_buffer[3] = message_port;
+        param_send_buffer[4] = master_port;
+        param_send_buffer[5] = record_port;
+        param_send_buffer[6] = j;
+        param_send_buffer[7] = oneNodeWeight;
+        param_send_buffer[8] = twoNodeWeight;
+        param_send_buffer[9] = redo_limit;
+        param_send_buffer[10] = HOTSPOT_PERCENTAGE;
+        param_send_buffer[11] = HOTSPOT_FIXED_SIZE;
+        param_send_buffer[12] = extension_limit;
+        param_send_buffer[13] = random_read_limit;
+        int k;
+        for (k = 0; k < NODENUM; k++)
+        {
+            param_send_buffer[14+k] = ip[k];
+        }
+        int ret;
+        int size = (14+NODENUM)*sizeof(int);
+        ret = send(param_connect[j], param_send_buffer, size, 0);
+        if (ret == -1)
+            printf("param naster send error\n");
         close(param_connect[j]);
     }
 }
 
 void InitMessage(void)
 {
-	//record the accept socket fd of the connected client
-	int conn;
+    //record the accept socket fd of the connected client
+    int conn;
 
-	int message_connect[NODENUM];
-	int message_buffer[1];
+    int message_connect[NODENUM];
+    int message_buffer[1];
 
-	int master_sockfd;
+    int master_sockfd;
     int port = message_port;
 
-	// use the TCP protocol
-	master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	//bind
-	struct sockaddr_in mastersock_addr;
-	memset(&mastersock_addr, 0, sizeof(mastersock_addr));
-	mastersock_addr.sin_family = AF_INET;
-	mastersock_addr.sin_port = htons(port);
-	mastersock_addr.sin_addr.s_addr = INADDR_ANY;
+    // use the TCP protocol
+    master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    //bind
+    struct sockaddr_in mastersock_addr;
+    memset(&mastersock_addr, 0, sizeof(mastersock_addr));
+    mastersock_addr.sin_family = AF_INET;
+    mastersock_addr.sin_port = htons(port);
+    mastersock_addr.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
-	{
-		printf("message server bind error!\n");
-		exit(1);
-	}
+    if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
+    {
+        printf("message server bind error!\n");
+        exit(1);
+    }
 
-	//listen
+    //listen
     if(listen(master_sockfd, LISTEN_QUEUE) == -1)
     {
         printf("message server listen error!\n");
         exit(1);
     }
 
-	socklen_t slave_length;
-	struct sockaddr_in slave_addr;
-	slave_length = sizeof(slave_addr);
-   	int i = 0;
+    socklen_t slave_length;
+    struct sockaddr_in slave_addr;
+    slave_length = sizeof(slave_addr);
+       int i = 0;
 
     while(i < NODENUM)
     {
-    	conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
-    	message_connect[i] = conn;
-    	if(conn < 0)
-    	{
-    		printf("message master accept connect error!\n");
-    	    exit(1);
-    	}
-    	i++;
+        conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
+        message_connect[i] = conn;
+        if(conn < 0)
+        {
+            printf("message master accept connect error!\n");
+            exit(1);
+        }
+        i++;
     }
 
     int j;
@@ -256,69 +256,69 @@ void InitMessage(void)
     // inform the node in the system begin start the transaction process.
     for (j = 0; j < NODENUM; j++)
     {
-    	ret = recv(message_connect[j], message_buffer, sizeof(message_buffer), 0);
-    	if (ret == -1)
-    		printf("message master recv error\n");
+        ret = recv(message_connect[j], message_buffer, sizeof(message_buffer), 0);
+        if (ret == -1)
+            printf("message master recv error\n");
     }
 
     for (j = 0; j < NODENUM; j++)
     {
-    	message_buffer[0] = 999;
-    	ret = send(message_connect[j], message_buffer, sizeof(message_buffer), 0);
-    	if (ret == -1)
-    		printf("message master send error\n");
-    	close(message_connect[j]);
+        message_buffer[0] = 999;
+        ret = send(message_connect[j], message_buffer, sizeof(message_buffer), 0);
+        if (ret == -1)
+            printf("message master send error\n");
+        close(message_connect[j]);
     }
     //now we can reform the node to begin to run the transaction.
 }
 
 void InitRecord(void)
 {
-	//record the accept socket fd of the connected client
-	int conn;
+    //record the accept socket fd of the connected client
+    int conn;
 
-	int record_connect[NODENUM];
+    int record_connect[NODENUM];
 
-	int master_sockfd;
+    int master_sockfd;
     int port = record_port;
 
-	// use the TCP protocol
-	master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	//bind
-	struct sockaddr_in mastersock_addr;
-	memset(&mastersock_addr, 0, sizeof(mastersock_addr));
-	mastersock_addr.sin_family = AF_INET;
-	mastersock_addr.sin_port = htons(port);
-	mastersock_addr.sin_addr.s_addr = INADDR_ANY;
+    // use the TCP protocol
+    master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    //bind
+    struct sockaddr_in mastersock_addr;
+    memset(&mastersock_addr, 0, sizeof(mastersock_addr));
+    mastersock_addr.sin_family = AF_INET;
+    mastersock_addr.sin_port = htons(port);
+    mastersock_addr.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
-	{
-		printf("record server bind error!\n");
-		exit(1);
-	}
+    if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
+    {
+        printf("record server bind error!\n");
+        exit(1);
+    }
 
-	//listen
+    //listen
     if(listen(master_sockfd, LISTEN_QUEUE) == -1)
     {
         printf("record server listen error!\n");
         exit(1);
     }
 
-	socklen_t slave_length;
-	struct sockaddr_in slave_addr;
-	slave_length = sizeof(slave_addr);
-   	int i = 0;
+    socklen_t slave_length;
+    struct sockaddr_in slave_addr;
+    slave_length = sizeof(slave_addr);
+       int i = 0;
 
     while(i < NODENUM)
     {
-    	conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
-    	record_connect[i] = conn;
-    	if(conn < 0)
-    	{
-    		printf("record master accept connect error!\n");
-    	    exit(1);
-    	}
-    	i++;
+        conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
+        record_connect[i] = conn;
+        if(conn < 0)
+        {
+            printf("record master accept connect error!\n");
+            exit(1);
+        }
+        i++;
     }
 
     int j;
@@ -328,40 +328,40 @@ void InitRecord(void)
     buf = (uint64_t**)malloc(NODENUM*sizeof(uint64_t*));
     for (j = 0; j < NODENUM; j++)
     {
-    	buf[j] = (uint64_t*)malloc(5*sizeof(uint64_t));
+        buf[j] = (uint64_t*)malloc(5*sizeof(uint64_t));
     }
 
     // inform the node in the system begin start the transaction process.
     for (j = 0; j < NODENUM; j++)
     {
-    	ret = recv(record_connect[j], buf[j], 5*sizeof(uint64_t), 0);
-    	if (ret == -1)
-    		printf("record master recv error\n");
+        ret = recv(record_connect[j], buf[j], 5*sizeof(uint64_t), 0);
+        if (ret == -1)
+            printf("record master recv error\n");
     }
 
     for (i = 0; i < NODENUM; i++)
-    	for (j = 0; j < NODENUM-i-1; j++)
-    	{
-    		uint64_t temp[5];
-    		if (buf[j][0] > buf[j+1][0])
-    		{
-    			temp[0] = buf[j][0];
-    			temp[1] = buf[j][1];
-    			temp[2] = buf[j][2];
-    			temp[3] = buf[j][3];
-    			temp[4] = buf[j][4];
-    			buf[j][0] = buf[j+1][0];
-    			buf[j][1] = buf[j+1][1];
-    			buf[j][2] = buf[j+1][2];
-    			buf[j][3] = buf[j+1][3];
-    			buf[j][4] = buf[j+1][4];
+        for (j = 0; j < NODENUM-i-1; j++)
+        {
+            uint64_t temp[5];
+            if (buf[j][0] > buf[j+1][0])
+            {
+                temp[0] = buf[j][0];
+                temp[1] = buf[j][1];
+                temp[2] = buf[j][2];
+                temp[3] = buf[j][3];
+                temp[4] = buf[j][4];
+                buf[j][0] = buf[j+1][0];
+                buf[j][1] = buf[j+1][1];
+                buf[j][2] = buf[j+1][2];
+                buf[j][3] = buf[j+1][3];
+                buf[j][4] = buf[j+1][4];
                 buf[j+1][0] = temp[0];
                 buf[j+1][1] = temp[1];
                 buf[j+1][2] = temp[2];
                 buf[j+1][3] = temp[3];
                 buf[j+1][4] = temp[4];
-    		}
-    	}
+            }
+        }
 
     // flush the buffer
     printf("\n");
@@ -371,65 +371,65 @@ void InitRecord(void)
 
         help.s_addr = (in_addr_t)buf[i][0];
         char * result = inet_ntoa(help);
-    	printf("%s %ld %ld %ld %ld\n", result, buf[i][1], buf[i][2], buf[i][3], buf[i][4]);
+        printf("%s %ld %ld %ld %ld\n", result, buf[i][1], buf[i][2], buf[i][3], buf[i][4]);
     }
     //now we can reform the node to begin to run the transaction.
 }
 
 void InitMaster(void)
 {
-	int status;
-	//record the accept socket fd of the connected client
-	int conn;
+    int status;
+    //record the accept socket fd of the connected client
+    int conn;
 
-	master_arg *argu = (master_arg *) malloc (NODENUM*(THREADNUM+1)*sizeof(master_arg));
-	master_tid = (pthread_t *) malloc (NODENUM*(THREADNUM+1)*sizeof(pthread_t));
+    master_arg *argu = (master_arg *) malloc (NODENUM*(THREADNUM+1)*sizeof(master_arg));
+    master_tid = (pthread_t *) malloc (NODENUM*(THREADNUM+1)*sizeof(pthread_t));
 
-	int master_sockfd;
-	void * pstatus;
+    int master_sockfd;
+    void * pstatus;
     int port = master_port;
-	// use the TCP protocol
+    // use the TCP protocol
 
-	master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	//bind
-	struct sockaddr_in mastersock_addr;
-	memset(&mastersock_addr, 0, sizeof(mastersock_addr));
-	mastersock_addr.sin_family = AF_INET;
-	mastersock_addr.sin_port = htons(port);
-	mastersock_addr.sin_addr.s_addr = INADDR_ANY;
+    master_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    //bind
+    struct sockaddr_in mastersock_addr;
+    memset(&mastersock_addr, 0, sizeof(mastersock_addr));
+    mastersock_addr.sin_family = AF_INET;
+    mastersock_addr.sin_port = htons(port);
+    mastersock_addr.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
-	{
-		printf("master server bind error!\n");
-		exit(1);
-	}
+    if (bind(master_sockfd, (struct sockaddr *)&mastersock_addr, sizeof(mastersock_addr)) == -1)
+    {
+        printf("master server bind error!\n");
+        exit(1);
+    }
 
-	//listen
+    //listen
     if(listen(master_sockfd, LISTEN_QUEUE) == -1)
     {
         printf("master server listen error!\n");
         exit(1);
     }
     //receive or transfer data
-	socklen_t slave_length;
-	struct sockaddr_in slave_addr;
-	slave_length = sizeof(slave_addr);
-   	int i = 0;
+    socklen_t slave_length;
+    struct sockaddr_in slave_addr;
+    slave_length = sizeof(slave_addr);
+       int i = 0;
 
     while(i < NODENUM*(THREADNUM+1))
     {
-    	conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
-    	argu[i].conn = conn;
-    	argu[i].index = i;
-    	if(conn < 0)
-    	{
-    		printf("master accept connect error!\n");
-    	    exit(1);
-    	}
-    	status = pthread_create(&master_tid[i], NULL, MasterRespond, &(argu[i]));
-    	if (status != 0)
-    		printf("create thread %d error %d!\n", i, status);
-    	i++;
+        conn = accept(master_sockfd, (struct sockaddr*)&slave_addr, &slave_length);
+        argu[i].conn = conn;
+        argu[i].index = i;
+        if(conn < 0)
+        {
+            printf("master accept connect error!\n");
+            exit(1);
+        }
+        status = pthread_create(&master_tid[i], NULL, MasterRespond, &(argu[i]));
+        if (status != 0)
+            printf("create thread %d error %d!\n", i, status);
+        i++;
     }
 
     for (i = 0; i < NODENUM*(THREADNUM+1); i++)
@@ -438,52 +438,52 @@ void InitMaster(void)
 
 void* MasterRespond(void *pargu)
 {
-	int conn;
-	int index;
-	master_arg * temp;
-	temp = (master_arg *) pargu;
-	conn = temp->conn;
-	index = temp->index;
+    int conn;
+    int index;
+    master_arg * temp;
+    temp = (master_arg *) pargu;
+    conn = temp->conn;
+    index = temp->index;
 
-	memset(mrecv_buffer[index], 0, MRECV_BUFFER_MAXSIZE*sizeof(uint64_t));
-	int ret;
-	master_command type;
+    memset(mrecv_buffer[index], 0, MRECV_BUFFER_MAXSIZE*sizeof(uint64_t));
+    int ret;
+    master_command type;
     do
     {
-    	ret = recv(conn, mrecv_buffer[index], MRECV_BUFFER_MAXSIZE*sizeof(uint64_t), 0);
-   	    if (ret == -1)
-   	    {
-   	    	printf("master receive error!\n");
-   	    }
+        ret = recv(conn, mrecv_buffer[index], MRECV_BUFFER_MAXSIZE*sizeof(uint64_t), 0);
+           if (ret == -1)
+           {
+               printf("master receive error!\n");
+           }
 
-   	    type = (master_command)(*(mrecv_buffer[index]));
-   	    switch(type)
-   	    {
-   	    case cmd_getGlobalCID:
-   	    	ProcessGlobalCID(mrecv_buffer[index], conn, index);
-   	    	break;
-   	    	break;
-	    case cmd_starttransaction:
-		    //printf("enter start transaction\n");
-		    ProcessStartTransaction(mrecv_buffer[index], conn, index);
-		    break;
-	    case cmd_getendtimestamp:
-	        //printf("enter get end time stamp\n");
-		    ProcessEndTimestamp(mrecv_buffer[index], conn, index);
-		   break;
-	    case cmd_updateprocarray:
-		    //printf("enter update procarray\n");
-		    ProcessUpdateProcarray(mrecv_buffer[index], conn, index);
-		    break;
-	    case cmd_release_master:
-		    //printf("enter release master conncet\n");
-		    break;
-	    default:
-		    printf("error route, never here!\n");
-		    break;
-   	    }
+           type = (master_command)(*(mrecv_buffer[index]));
+           switch(type)
+           {
+           case cmd_getGlobalCID:
+               ProcessGlobalCID(mrecv_buffer[index], conn, index);
+               break;
+               break;
+        case cmd_starttransaction:
+            //printf("enter start transaction\n");
+            ProcessStartTransaction(mrecv_buffer[index], conn, index);
+            break;
+        case cmd_getendtimestamp:
+            //printf("enter get end time stamp\n");
+            ProcessEndTimestamp(mrecv_buffer[index], conn, index);
+           break;
+        case cmd_updateprocarray:
+            //printf("enter update procarray\n");
+            ProcessUpdateProcarray(mrecv_buffer[index], conn, index);
+            break;
+        case cmd_release_master:
+            //printf("enter release master conncet\n");
+            break;
+        default:
+            printf("error route, never here!\n");
+            break;
+           }
     } while (type != cmd_release_master);
-	close(conn);
+    close(conn);
     pthread_exit(NULL);
     return (void*)NULL;
 }

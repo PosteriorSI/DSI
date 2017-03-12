@@ -15,8 +15,8 @@
 
 typedef enum LockMode
 {
-	LOCK_SHARED,
-	LOCK_EXCLUSIVE
+    LOCK_SHARED,
+    LOCK_EXCLUSIVE
 }LockMode;
 
 extern pthread_rwlock_t ProcArrayLock;

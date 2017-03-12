@@ -16,40 +16,40 @@ pthread_mutex_t CidLock;
 
 Cid Get_Global_CID(void)
 {
-	Cid global_cid;
+    Cid global_cid;
 
-	pthread_mutex_lock(&CidLock);
-	global_cid=Global_Next_CID++;
-	pthread_mutex_unlock(&CidLock);
+    pthread_mutex_lock(&CidLock);
+    global_cid=Global_Next_CID++;
+    pthread_mutex_unlock(&CidLock);
 
-	return global_cid;
+    return global_cid;
 }
 
 //just get the value of 'global-next-cid'.
 Cid Get_Global_Next_CID(void)
 {
-	Cid global_cid;
+    Cid global_cid;
 
-	pthread_mutex_lock(&CidLock);
-	global_cid=Global_Next_CID;
-	pthread_mutex_unlock(&CidLock);
+    pthread_mutex_lock(&CidLock);
+    global_cid=Global_Next_CID;
+    pthread_mutex_unlock(&CidLock);
 
-	return global_cid;
+    return global_cid;
 }
 
 void Init_Global_CID(void)
 {
-	Global_Next_CID=1;
+    Global_Next_CID=1;
 
-	if(pthread_mutex_init(&CidLock, NULL))
-	{
-		printf("pthread_mutex_init error\n");
-		exit(-1);
-	}
+    if(pthread_mutex_init(&CidLock, NULL))
+    {
+        printf("pthread_mutex_init error\n");
+        exit(-1);
+    }
 }
 
 uint64_t TotalDistributedTrasactions(void)
 {
-	return Global_Next_CID-1;
+    return Global_Next_CID-1;
 }
 

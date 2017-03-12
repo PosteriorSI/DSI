@@ -12,17 +12,17 @@
 
 typedef enum LockMode
 {
-	LOCK_SHARED,
-	LOCK_EXCLUSIVE
+    LOCK_SHARED,
+    LOCK_EXCLUSIVE
 }LockMode;
 
 struct DataLock
 {
-	uint32_t table_id;
-	TupleId tuple_id;
-	LockMode lockmode;
+    uint32_t table_id;
+    TupleId tuple_id;
+    LockMode lockmode;
 
-	uint64_t index;
+    uint64_t index;
 };
 
 typedef struct DataLock DataLock;

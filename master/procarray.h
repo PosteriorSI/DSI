@@ -11,20 +11,20 @@
 
 struct PROC
 {
-	TransactionId tid;
+    TransactionId tid;
     pthread_t pid;
 
-	int index;//the index for per thread.
+    int index;//the index for per thread.
 };
 
 typedef struct PROC PROC;
 
 struct TransIdMgr
 {
-	TransactionId curid;
-	TransactionId maxid;
-	TransactionId latestcompletedId;
-	pthread_mutex_t IdLock;
+    TransactionId curid;
+    TransactionId maxid;
+    TransactionId latestcompletedId;
+    pthread_mutex_t IdLock;
 };
 
 

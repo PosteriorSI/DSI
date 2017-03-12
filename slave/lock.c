@@ -20,33 +20,33 @@ pthread_spinlock_t* Gcid2LsnapLatch=NULL;
 
 size_t MainLockArraySize(void)
 {
-	return MainLockNum*sizeof(pthread_rwlock_t);
+    return MainLockNum*sizeof(pthread_rwlock_t);
 }
 
 void InitMainLockArray(void)
 {
-	size_t size;
-	int i;
-	pthread_rwlockattr_t rwlockattr;
+    size_t size;
+    int i;
+    pthread_rwlockattr_t rwlockattr;
 
-	pthread_rwlockattr_init(&rwlockattr);
-	pthread_rwlockattr_setpshared(&rwlockattr, PTHREAD_PROCESS_SHARED);
+    pthread_rwlockattr_init(&rwlockattr);
+    pthread_rwlockattr_setpshared(&rwlockattr, PTHREAD_PROCESS_SHARED);
 
-	size=MainLockArraySize();
+    size=MainLockArraySize();
 
-	MainLockArray=(pthread_rwlock_t*)ShmemAlloc(size);
+    MainLockArray=(pthread_rwlock_t*)ShmemAlloc(size);
 
-	if(MainLockArray==NULL)
-	{
-		printf("Shmvariable error\n");
-		exit(-1);
-	}
+    if(MainLockArray==NULL)
+    {
+        printf("Shmvariable error\n");
+        exit(-1);
+    }
 
-	for(i=0;i<MainLockNum;i++)
-	{
-		//MainLockArray should be shared between different processes.
-		pthread_rwlock_init(&MainLockArray[i], &rwlockattr);
-	}
+    for(i=0;i<MainLockNum;i++)
+    {
+        //MainLockArray should be shared between different processes.
+        pthread_rwlock_init(&MainLockArray[i], &rwlockattr);
+    }
 }
 
 
@@ -55,14 +55,14 @@ void InitMainLockArray(void)
  */
 void AcquireWrLock(pthread_rwlock_t* lock, LockMode mode)
 {
-	if(mode == LOCK_SHARED)
-	{
-		pthread_rwlock_rdlock(lock);
-	}
-	else
-	{
-		pthread_rwlock_wrlock(lock);
-	}
+    if(mode == LOCK_SHARED)
+    {
+        pthread_rwlock_rdlock(lock);
+    }
+    else
+    {
+        pthread_rwlock_wrlock(lock);
+    }
 }
 
 /*
@@ -70,47 +70,47 @@ void AcquireWrLock(pthread_rwlock_t* lock, LockMode mode)
  */
 void ReleaseWrLock(pthread_rwlock_t* lock)
 {
-	pthread_rwlock_unlock(lock);
+    pthread_rwlock_unlock(lock);
 }
 
 size_t EMapLatchSize(void)
 {
-	return (EMapNum+1)*sizeof(pthread_spinlock_t);
+    return (EMapNum+1)*sizeof(pthread_spinlock_t);
 }
 
 void InitEMapLatch(void)
 {
-	int i;
-	int size;
+    int i;
+    int size;
 
-	size=EMapLatchSize();
+    size=EMapLatchSize();
 
-	Gcid2LcidLatch=(pthread_spinlock_t*)ShmemAlloc(size);
+    Gcid2LcidLatch=(pthread_spinlock_t*)ShmemAlloc(size);
 
-	Gcid2LsnapLatch=(pthread_spinlock_t*)ShmemAlloc(size);
+    Gcid2LsnapLatch=(pthread_spinlock_t*)ShmemAlloc(size);
 
-	if(Gcid2LcidLatch==NULL || Gcid2LsnapLatch==NULL)
-	{
-		printf("EMapLock error\n");
-		exit(-1);
-	}
+    if(Gcid2LcidLatch==NULL || Gcid2LsnapLatch==NULL)
+    {
+        printf("EMapLock error\n");
+        exit(-1);
+    }
 
-	for(i=0;i<=EMapNum;i++)
-	{
-		pthread_spin_init(&Gcid2LcidLatch[i], PTHREAD_PROCESS_SHARED);
-		pthread_spin_init(&Gcid2LsnapLatch[i], PTHREAD_PROCESS_SHARED);
-	}
+    for(i=0;i<=EMapNum;i++)
+    {
+        pthread_spin_init(&Gcid2LcidLatch[i], PTHREAD_PROCESS_SHARED);
+        pthread_spin_init(&Gcid2LsnapLatch[i], PTHREAD_PROCESS_SHARED);
+    }
 }
 
 void AcquireLatch(pthread_spinlock_t* latch)
 {
-	//printf("before acquire latch\n");
-	pthread_spin_lock(latch);
-	//printf("after acquire latch\n");
+    //printf("before acquire latch\n");
+    pthread_spin_lock(latch);
+    //printf("after acquire latch\n");
 
 }
 
 void ReleaseLatch(pthread_spinlock_t* latch)
 {
-	pthread_spin_unlock(latch);
+    pthread_spin_unlock(latch);
 }

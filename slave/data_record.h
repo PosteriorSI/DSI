@@ -17,26 +17,26 @@
  */
 typedef enum UpdateType
 {
-	//data insert
-	DataInsert,
-	//data update
-	DataUpdate,
-	//data delete
-	DataDelete
+    //data insert
+    DataInsert,
+    //data update
+    DataUpdate,
+    //data delete
+    DataDelete
 }UpdateType;
 
 struct DataRecord
 {
-	UpdateType type;
+    UpdateType type;
 
-	int table_id;
-	TupleId tuple_id;
+    int table_id;
+    TupleId tuple_id;
 
-	//other information attributes.
-	TupleId value;
+    //other information attributes.
+    TupleId value;
 
-	//index in the table.
-	uint64_t index;
+    //index in the table.
+    uint64_t index;
 };
 typedef struct DataRecord DataRecord;
 

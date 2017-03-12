@@ -25,9 +25,9 @@ int main()
    }
    else if (pid1 == 0)
    {
-	   InitParam();
-	   printf("parameter server end\n");
-	   exit(1);
+       InitParam();
+       printf("parameter server end\n");
+       exit(1);
    }
 
    if((pid2 = fork()) < 0)
@@ -36,9 +36,9 @@ int main()
    }
    else if (pid2 == 0)
    {
-	   InitMessage();
-	   printf("message server end\n");
-	   exit(1);
+       InitMessage();
+       printf("message server end\n");
+       exit(1);
    }
 
    if((pid3 = fork()) < 0)
@@ -47,9 +47,9 @@ int main()
    }
    else if (pid3 == 0)
    {
-	   InitRecord();
-	   //printf("record server end\n");
-	   exit(1);
+       InitRecord();
+       //printf("record server end\n");
+       exit(1);
    }
 
    InitSys();

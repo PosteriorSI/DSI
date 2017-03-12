@@ -25,35 +25,35 @@
  */
 struct PROCHEAD
 {
-	int numprocs;
-	int maxprocs;
-	pthread_mutex_t ilock;
+    int numprocs;
+    int maxprocs;
+    pthread_mutex_t ilock;
 };
 
 typedef struct PROCHEAD PROCHEAD;
 
 struct THREADINFO
 {
-	int index;//index for process array.
-	char* memstart;//start address of current thread's private memory.
+    int index;//index for process array.
+    char* memstart;//start address of current thread's private memory.
 
-	TransactionId curid;
-	TransactionId maxid;
+    TransactionId curid;
+    TransactionId maxid;
 };
 
 typedef struct THREADINFO THREAD;
 
 typedef struct terminalArgs
 {
-	int whse_id;
-	int dist_id;
-	int type;//'0' for load data, '1' for run transaction.
+    int whse_id;
+    int dist_id;
+    int type;//'0' for load data, '1' for run transaction.
 
-	//used to wait until all terminals arrive.
-	pthread_barrier_t *barrier;
+    //used to wait until all terminals arrive.
+    pthread_barrier_t *barrier;
 
-	//used to transactions statistic.
-	TransState *StateInfo;
+    //used to transactions statistic.
+    TransState *StateInfo;
 }terminalArgs;
 
 extern pthread_cond_t* cond;
