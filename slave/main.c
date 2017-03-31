@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
     PrintTable();
     */
     int i,j;
-    int commNum[20]={0};
     pid_t pid;
     //InitSys();
     if (argc != 2)
@@ -52,7 +51,7 @@ int main(int argc, char *argv[])
 
     else if(pid == 0)
     {
-       //redirection the stdout.
+        //redirection the stdout.
 
         if(freopen("service_log.txt", "w", stdout)==NULL)
         {
@@ -64,16 +63,6 @@ int main(int argc, char *argv[])
         EMapCleanStart();
         // storage process
         InitStorage();
-
-        for(i=1;i<NODENUM*THREADNUM+1;i++)
-        {
-            for(j=0;j<12;j++)
-                commNum[j]+=CommTimes[i][j];
-        }
-
-        printf("count for communications times:\n");
-        for(i=0;i<12;i++)
-            printf("%4d : %d times\n", i, commNum[i]);
       /*
         for (i = 0; i < 9; i++)
         {

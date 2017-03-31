@@ -12,10 +12,9 @@
 #include "thread_main.h"
 #include "trans.h"
 #include "data_am.h"
+#include "config.h"
 
 void* Respond(void *sockp);
-
-uint32_t** CommTimes;
 
 int oneNodeWeight;
 int twoNodeWeight;
@@ -60,24 +59,6 @@ int message_socket;
 int param_socket;
 
 pthread_t* server_tid=NULL;
-
-void InitCommTimes(void)
-{
-    int size;
-    int i,j;
-    int num=20;
-
-    size=sizeof(uint32_t*)*(NODENUM*THREADNUM+1);
-    CommTimes=(uint32_t**)malloc(size);
-
-    size=sizeof(uint32_t)*num;
-    for(i=0;i<NODENUM*THREADNUM+1;i++)
-    {
-        CommTimes[i]=(uint32_t*)malloc(size);
-        memset(CommTimes[i], (uint32_t)0, size);
-    }
-}
-
 
 // read the configure parameters from the configure file.
 int ReadConfig(char * find_string, char * result)
@@ -372,55 +353,42 @@ void* Respond(void *pargu)
            {
            case cmd_localAccess:
                serviceLocalAccess(conn, rbuffer);
-            CommTimes[index][0]++;
                break;
            case cmd_selfAccess:
                serviceSelfAccess(conn, rbuffer);
-            CommTimes[index][1]++;
                break;
            case cmd_dataInsert:
                serviceDataInsert(conn, rbuffer);
-            CommTimes[index][2]++;
                break;
            case cmd_dataUpdate:
                serviceDataUpdate(conn, rbuffer);
-            CommTimes[index][3]++;
                break;
            case cmd_dataDelete:
                serviceDataDelete(conn, rbuffer);
-            CommTimes[index][4]++;
                break;
            case cmd_dataRead:
                serviceDataRead(conn, rbuffer);
-            CommTimes[index][5]++;
                break;
            case cmd_singlePrepare:
                serviceLocalPrepare(conn, rbuffer);
-            CommTimes[index][6]++;
                break;
            case cmd_singleCommit:
                serviceSingleCommit(conn, rbuffer);
-            CommTimes[index][7]++;
                break;
            case cmd_singleAbort:
                serviceSingleAbort(conn, rbuffer);
-            CommTimes[index][8]++;
                break;
            case cmd_prepare:
                serviceLocalPrepare(conn, rbuffer);
-            CommTimes[index][9]++;
                break;
            case cmd_commit:
                serviceLocalCommit(conn, rbuffer);
-            CommTimes[index][10]++;
                break;
            case cmd_abort:
                serviceLocalAbort(conn, rbuffer);
-            CommTimes[index][11]++;
                break;
            case cmd_abortAheadWrite:
                serviceAbortAheadWrite(conn, rbuffer);
-            CommTimes[index][12]++;
                break;
         case cmd_release:
             printf("enter release the connect %d\n", index);
@@ -456,7 +424,7 @@ void GetParam(void)
 {
    int i;
    int param_send_buffer[1];
-   int param_recv_buffer[10+NODENUMMAX];
+   int param_recv_buffer[32+NODENUMMAX];
 
    // register local IP to master node && get by other nodes in the system
    in_addr_t help = inet_addr(local_ip);
@@ -494,11 +462,44 @@ void GetParam(void)
    // random read control
    random_read_limit = param_recv_buffer[13];
 
+   benchmarkType = (BENCHMARK)param_recv_buffer[14];
+
+    if (benchmarkType == TPCC)
+    {
+        TABLENUM = TPCC_TABLENUM;
+    }
+    else if (benchmarkType == SMALLBANK)
+    {
+        TABLENUM = SMALLBANK_TABLENUM;
+    }
+    else
+    {
+        printf("read benchmark type error!\n");
+        exit(-1);
+    }
+    
+    transactionsPerTerminal = param_recv_buffer[15];
+    paymentWeightValue = param_recv_buffer[16];
+    orderStatusWeightValue = param_recv_buffer[17];
+    deliveryWeightValue = param_recv_buffer[18];
+    stockLevelWeightValue = param_recv_buffer[19];
+    limPerMin_Terminal = param_recv_buffer[20];
+    configWhseCount = param_recv_buffer[21];
+    configCommitCount = param_recv_buffer[22];
+    OrderMaxNum = param_recv_buffer[23];
+    MaxDataLockNum = param_recv_buffer[24];
+    scaleFactor = param_recv_buffer[25] * 0.01;
+    FREQUENCY_AMALGAMATE = param_recv_buffer[26];
+    FREQUENCY_BALANCE = param_recv_buffer[27];
+    FREQUENCY_DEPOSIT_CHECKING = param_recv_buffer[28];
+    FREQUENCY_SEND_PAYMENT = param_recv_buffer[29];
+    FREQUENCY_TRANSACT_SAVINGS = param_recv_buffer[30];
+    FREQUENCY_WRITE_CHECK = param_recv_buffer[31];
 
    for (i = 0; i < nodenum; i++)
    {
       struct in_addr help;
-      help.s_addr = param_recv_buffer[14+i];
+      help.s_addr = param_recv_buffer[32+i];
       char * result = inet_ntoa(help);
       int k;
       for (k = 0; result[k] != '\0'; k++)

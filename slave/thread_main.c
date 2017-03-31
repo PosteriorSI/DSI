@@ -108,6 +108,8 @@ void ThreadRun(int nthreads)
 
 void GetReady(void)
 {
+    InitConfig();
+
     // get the parameters from the configure file.
     InitNetworkParam();
 
@@ -118,9 +120,6 @@ void GetReady(void)
     GetParam();
 
     InitRecordClient();
-
-    InitConfig();
-
 
     /* connect the message server from the master node,
        the message server is used for inform the slave nodes
@@ -162,8 +161,6 @@ void InitService(void)
 
 void InitStorage()
 {
-    InitCommTimes();
-
     InitRecord();
     InitServerBuffer();
 
@@ -392,11 +389,12 @@ void EndReport(TransState* StateInfo, int terminals)
 
     in_addr_t help = inet_addr(local_ip);
 
-    uint64_t buf[4];
+    uint64_t buf[5];
     buf[0] = (uint64_t)help;
     buf[1] = (uint64_t)tpmC;
     buf[2] = (uint64_t)tpmTotal;
     buf[3] = transactionAbort;
+    buf[4] = transactionCount;
     int ret;
     ret = send(recordfd, buf, sizeof(buf), 0);
     if (ret == -1)

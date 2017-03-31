@@ -2,6 +2,7 @@
 #define SOCKET_H_
 
 #include <pthread.h>
+#include "transactions.h"
 
 #define LINEMAX 100
 #define RECEIVE_BUFFSIZE 8
@@ -16,10 +17,6 @@
 
 #define SSEND_BUFFER_MAXSIZE 8
 #define SRECV_BUFFER_MAXSIZE 1000
-
-extern uint32_t** CommTimes;
-
-extern void InitCommTimes(void);
 
 extern void InitParamClient(void);
 extern void InitMessageClient(void);
